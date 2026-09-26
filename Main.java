@@ -5,49 +5,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-
         LaunchPage launchPage = new LaunchPage();
 
-
-        System.out.println("==== Route Finder ====");
-
-        //char[][] grid = {
-        //    {'S', '.', '.', '.', '.', '.', '.', '.'},
-        //    {'.', '.', '#', '#', '#', '.', '.', '.'},
-        //    {'.', '.', '.', '.', '#', '.', '.', '.'},
-        //    {'.', '#', '.', '.', '#', '.', '.', '.'},
-        //   {'.', '#', '.', '.', '.', '.', '.', 'E'}
-        //};
-
-        //Node start = new Node(0, 0);
-        //Node end = new Node(4, 7);
-
-        char[][] grid = {
-            {'S', '.', '.', '.', '.', '.', '.', '.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
-            {'.', '#', '#', '#', '#', '#', '#', '.', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
-            {'.', '.', '.', '.', '.', '.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
-            {'#', '#', '#', '#', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.', '#', '#', '#', '#', '#', '#', '#', '.', '#', '#', '#', '#', '.'},
-            {'.', '.', '.', '.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#', '.', '.', '.', '.', '.', '.', '#', '.', '#', '.', '.', '.', '.', '.'},
-            {'.', '#', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.', '#', '#', '#', '#', '#', '.', '#', '#', '#', '#', '#', '#', '.'},
-            {'.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '#', '.', '.', '.', '.', '.', '.', '.', '.'},
-            {'.', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
-            {'.', '.', '.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
-            {'#', '#', '.', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
-            {'.', '.', '.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
-            {'.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
-            {'.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
-            {'.', '#', '.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
-            {'.', '#', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
-            {'.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
-            {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
-            {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
-            {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
-            {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', 'E'}
-        };
-
-        Node start = new Node(0, 0);
-        Node end = new Node(19, 29);
-        findPath(grid, start, end);
     }
 
     public static boolean isValidMove(char[][] grid, int row, int column) {
@@ -71,9 +30,14 @@ public class Main {
 
         Queue<Node> queue = new LinkedList<>();
 
-        boolean[][] visited = new boolean[grid.length][grid[0].length];
+        boolean[][] visited = new boolean[grid.length][];
+
+        for (int row = 0; row < grid.length; row++) {
+            visited[row] = new boolean[grid[row].length];
+        }
 
         queue.add(start);
+
         visited[start.row][start.column] = true;
 
         while (!queue.isEmpty()) {
@@ -81,15 +45,17 @@ public class Main {
             Node current = queue.remove();
 
             if (current.row == end.row && current.column == end.column) {
+
                 printPath(grid, current);
+
                 return;
             }
 
             int[][] directions = {
-                {-1, 0}, // up
-                {1, 0},  // down
-                {0, -1}, // left
-                {0, 1}   // right
+                {-1, 0},
+                {1, 0},
+                {0, -1},
+                {0, 1}
             };
 
             for (int[] direction : directions) {
@@ -97,15 +63,18 @@ public class Main {
                 int newRow = current.row + direction[0];
                 int newColumn = current.column + direction[1];
 
-                if (isValidMove(grid, newRow, newColumn)
-                        && !visited[newRow][newColumn]) {
+                if (isValidMove(grid, newRow, newColumn)) {
 
-                    visited[newRow][newColumn] = true;
+                    if (!visited[newRow][newColumn]) {
 
-                    Node neighbor = new Node(newRow, newColumn);
-                    neighbor.parent = current;
+                        visited[newRow][newColumn] = true;
 
-                    queue.add(neighbor);
+                        Node neighbor = new Node(newRow, newColumn);
+
+                        neighbor.parent = current;
+
+                        queue.add(neighbor);
+                    }
                 }
             }
         }
@@ -116,28 +85,23 @@ public class Main {
     public static void printPath(char[][] grid, Node end) {
 
         Node current = end;
+
         int pathLength = 0;
 
         while (current.parent != null) {
 
             if (grid[current.row][current.column] != 'E') {
+
                 grid[current.row][current.column] = '*';
             }
 
             current = current.parent;
+
             pathLength++;
         }
 
         System.out.println("Path found!");
+
         System.out.println("Path length: " + pathLength);
-
-        for (int row = 0; row < grid.length; row++) {
-
-            for (int column = 0; column < grid[row].length; column++) {
-                System.out.print(grid[row][column] + " ");
-            }
-
-            System.out.println();
-        }
     }
 }

@@ -1,25 +1,101 @@
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public class Window {
-    
+import java.util.Arrays;
+
+public class Window implements ActionListener {
+
     JFrame frame = new JFrame();
-    JLabel label = new JLabel("Hello!");
+
+    JLabel title = new JLabel("Route Finder");
+    JButton findPathButton = new JButton("Find Path");
+    JButton resetButton = new JButton("Reset Map");
+
+    
+    char[][] grid = {
+        {'S', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
+        {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
+        {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
+        {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
+        {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
+        {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
+        {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
+        {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
+        {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '.'},
+        {'.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.'},
+        {'.', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', 'E'}
+    };
+
+
+    char[][] originalGrid = new char[grid.length][];
+
+    {
+        for (int row = 0; row < grid.length; row++) {
+            originalGrid[row] = Arrays.copyOf(grid[row], grid[row].length);
+        }
+    }
+
+    MapPanel mapPanel = new MapPanel(grid);
 
     Window() {
 
-        label.setBounds(0, 0, 100, 50);
-        label.setFont(new Font(null, Font.PLAIN, 25));
+        title.setBounds(20, 20, 500, 50);
+        title.setFont(new Font(null, Font.BOLD, 32));
 
-        frame.add(label);
+        findPathButton.setBounds(600, 25, 150, 40);
+        findPathButton.setFocusable(false);
+        findPathButton.addActionListener(this);
+
+        resetButton.setBounds(400, 25, 150, 40);
+        resetButton.setFocusable(false);
+        resetButton.addActionListener(this);
+
+        frame.add(title);
+        frame.add(findPathButton);
+        frame.add(mapPanel);
+        frame.add(resetButton);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(420, 420);
+        frame.setSize(820, 700);
         frame.setLayout(null);
-        frame.setVisible(true);
         frame.setResizable(false);
+        frame.setVisible(true);
+    }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        if (e.getSource() == findPathButton) {
+
+            Node start = new Node(0, 0);
+            Node end = new Node(19, 29);
+
+            Main.findPath(grid, start, end);
+
+            mapPanel.repaint();
+        }
+
+        if (e.getSource() == resetButton) {
+            
+            for (int row = 0; row < grid.length; row++) {
+                grid[row] = Arrays.copyOf(originalGrid[row], originalGrid[row].length);
+            }
+
+            mapPanel.repaint();
+        }
     }
 }
