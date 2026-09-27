@@ -1,5 +1,9 @@
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.swing.Timer;
 
 public class Main {
 
@@ -26,7 +30,7 @@ public class Main {
         return true;
     }
 
-    public static void findPath(char[][] grid, Node start, Node end) {
+    public static void findPath(char[][] grid, Node start, Node end, Runnable repaint) {
 
         Queue<Node> queue = new LinkedList<>();
 
@@ -46,7 +50,7 @@ public class Main {
 
             if (current.row == end.row && current.column == end.column) {
 
-                printPath(grid, current);
+                printPath(grid, current, repaint);
 
                 return;
             }
@@ -82,26 +86,47 @@ public class Main {
         System.out.println("No path found.");
     }
 
-    public static void printPath(char[][] grid, Node end) {
+    public static void printPath(char[][] grid, Node end, Runnable repaint) {
+
+        List<Node> path = new ArrayList<>();
 
         Node current = end;
 
-        int pathLength = 0;
-
         while (current.parent != null) {
 
-            if (grid[current.row][current.column] != 'E') {
-
-                grid[current.row][current.column] = '*';
-            }
+            path.add(current);
 
             current = current.parent;
-
-            pathLength++;
         }
 
-        System.out.println("Path found!");
+        Collections.reverse(path);
 
-        System.out.println("Path length: " + pathLength);
+        final int[] index = {0};
+
+        Timer timer = new Timer(40, e -> {
+
+            if (index[0] < path.size()) {
+
+                Node node = path.get(index[0]);
+
+                if (grid[node.row][node.column] != 'E') {
+
+                    grid[node.row][node.column] = '*';
+                }
+
+                repaint.run();
+
+                index[0]++;
+
+            } else {
+
+                ((Timer) e.getSource()).stop();
+
+                System.out.println("Path found!");
+                System.out.println("Path length: " + path.size());
+            }
+        });
+
+        timer.start();
     }
 }

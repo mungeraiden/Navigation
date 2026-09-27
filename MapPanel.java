@@ -17,7 +17,7 @@ public class MapPanel extends JPanel implements MouseListener {
         setBounds(20, 120, 750, 500);
         setBackground(Color.WHITE);
 
-        addMouseListener(this);
+        addMouseListener(this); 
     }
 
     @Override
